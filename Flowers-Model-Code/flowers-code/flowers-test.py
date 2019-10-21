@@ -14,6 +14,8 @@ import seaborn as sns
 style.use('fivethirtyeight')
 sns.set(style='whitegrid', color_codes=True)
 plt.show();
+
+
 # model selection
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -43,23 +45,35 @@ import warnings
 warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
+#function for pie chart outputs
+def make_autopct(values):
+    def my_autopct(pct):
+        total = sum(values)
+        val = int(round(pct*total/100.0))
+        return '{p:.2f}%  ({v:d})'.format(p=pct,v=val)
+    return my_autopct
+
 
 #define path for flowers
-data = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers'
+data = 'C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers'
 # List out the directories inside the main input folder
 folders = os.listdir(data)
 print(folders)
 
+#load the model into the program
+model = load_model('C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers-code/flowers.h5')
+model.summary()
 
 # define arrays for images and their corresponding labels
 image_names = []
 train_labels = []
 train_images = []
+Y_data = []
 size = 150, 150
-
+i = 0
 
 for folder in folders:
-    # tqdm allows for progress bar output
+    #tqdm allows for progress bar output
     for file in tqdm(os.listdir(os.path.join(data, folder))):
         if file.endswith("jpg"):
             image_names.append(os.path.join(data,folder,file))
@@ -67,8 +81,37 @@ for folder in folders:
             img = cv2.imread(os.path.join(data,folder,file))
             im = cv2.resize(img, size)
             train_images.append(im)
+            Y_data.append(i)
         else:
             continue
+    i+=1
+
+#output total number of classes of images
+Y = np.array(Y_data)
+number_classes = [0,0,0,0,0]
+for i in range(len(Y)):
+    if (Y[i] == 0):
+        number_classes[0] += 1
+    elif (Y[i] == 1):
+        number_classes[1] += 1
+    elif (Y[i] == 2):
+        number_classes[2] += 1
+    elif (Y[i] == 3):
+        number_classes[3] += 1
+    elif (Y[i] == 4):
+        number_classes[4] += 1
+
+objects = folders
+y_pos = np.arange(len(objects))
+samples = number_classes
+
+# Data to plot
+colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'orange']
+# Plot
+plt.title('Total Number of Photos in the dataset')
+plt.pie(number_classes, labels=folders, colors=colors,autopct=make_autopct(number_classes), shadow=True, startangle=90)
+plt.axis('equal')
+plt.show()
 
 
 # Transform the image array to a numpy type
@@ -88,15 +131,61 @@ print(train.shape)
 print(Y.shape)
 
 # split the data set into training and validation sets
-x_train, x_test, y_train, y_test = train_test_split(train, Y, test_size=0.25, random_state=42)
+x_train, x_test, y_train, y_test = train_test_split(train, Y, test_size=0.20, random_state=42)
+
+
+#output amount of samples in train and test
+print("The model has " + str(len(x_train)) + " inputs")
+objects = ('Train','Test')
+y_pos = np.arange(len(objects))
+samples = []
+samples.append(len(x_train))
+samples.append(len(x_test))
+
+plt.pie(samples, labels=objects, colors=colors,autopct=make_autopct(samples), shadow=True, startangle=90)
+plt.axis('equal')
+plt.title('Number of total samples (Train/Test)')
+plt.show()
+
+# output total amount of samples per set of each class
+# y_train[1][8]
+split_classes_train = [0, 0, 0, 0, 0]
+split_classes_test = [0, 0, 0, 0, 0]
+
+for i in range(len(y_train)):
+    for j in range(len(folders)):
+        if (y_train[i][j] == 1):
+            split_classes_train[j] += 1
+
+for i in range(len(y_test)):
+    for j in range(len(folders)):
+        if (y_test[i][j] == 1):
+            split_classes_test[j] += 1
+
+objects = folders
+y_pos = np.arange(len(objects))
+
+samples_train = split_classes_train
+samples_test = split_classes_test
+
+# Train Samples Plot
+plt.pie(samples_train, labels=folders, colors=colors,autopct=make_autopct(samples_train), shadow=True, startangle=90)
+plt.axis('equal')
+plt.title('Number of Samples per Class (Train)')
+plt.show()
+
+
+# Test Samples
+plt.pie(samples_test, labels=folders, colors=colors,autopct=make_autopct(samples_test), shadow=True, startangle=90)
+plt.axis('equal')
+plt.title('Number of Samples per Class (Test)')
+plt.show()
 
 
 import warnings
 warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
-#load the model into the program
-model = load_model('C:/Users/dkrup/PycharmProjects/FlowersModel/flowers.h5')
 
 
 y_pred = model.predict(x_test)
@@ -122,6 +211,7 @@ print("Found %d correct flowers" % (corr_count))
 print("Found %d incorrect flowers" % (incorr_count))
 
 import itertools
+
 #create a confusion matrix
 i = 0
 j = 0
@@ -139,14 +229,14 @@ plt.show()
 
 
 
-
+#print out classification report
+print(classification_report(y_true, y_pred, target_names=folders))
 
 # output correctly identified flowers
-fig, ax = plt.subplots(4, 3)
-fig.set_size_inches(13, 13)
-
+fig, ax = plt.subplots(3 , 3)
+fig.set_size_inches(8, 8)
 count = 0
-for i in range(4):
+for i in range(3):
     for j in range(3):
         ax[i, j].imshow(x_test[corr[count]])
 
@@ -157,12 +247,14 @@ for i in range(4):
         count += 1
 
 plt.tight_layout()
+plt.show()
+
 
 #output incorrectly identified flowers
-fig, ax = plt.subplots(4, 3)
-fig.set_size_inches(13, 13)
+fig, ax = plt.subplots(3, 3)
+fig.set_size_inches(8, 8)
 count = 0
-for i in range(4):
+for i in range(3):
     for j in range(3):
         ax[i, j].imshow(x_test[incorr[count]])
         ax[i, j].set_title("Actual Flower : " + str(
@@ -173,4 +265,6 @@ for i in range(4):
 
 plt.tight_layout()
 plt.show()
+
+
 

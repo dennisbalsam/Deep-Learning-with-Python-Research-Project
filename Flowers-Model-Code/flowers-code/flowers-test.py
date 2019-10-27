@@ -56,13 +56,19 @@ def make_autopct(values):
 
 
 #define path for flowers
-data = 'C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers'
+#laptop path
+# data = 'C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers'
+#pc path
+data = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers'
 # List out the directories inside the main input folder
 folders = os.listdir(data)
 print(folders)
 
 #load the model into the program
-model = load_model('C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers-code/flowers.h5')
+#laptop path
+# model = load_model('C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers-code/flowers.h5')
+# pc path
+model = load_model('C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers-code/flowers.h5')
 model.summary()
 
 # define arrays for images and their corresponding labels
@@ -109,11 +115,18 @@ samples = number_classes
 # Data to plot
 colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'orange']
 # Plot
-plt.title('Total Number of Photos in the dataset')
+#pie chart
+plt.title('Number of patterns in each class')
 plt.pie(number_classes, labels=folders, colors=colors,autopct=make_autopct(number_classes), shadow=True, startangle=90)
 plt.axis('equal')
 plt.show()
+#bar graph
+plt.figure(figsize=[12,6])
+plt.bar(y_pos, samples, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.title('Number of Samples per Class')
 
+plt.show()
 
 # Transform the image array to a numpy type
 train = np.array(train_images)
@@ -135,6 +148,9 @@ print(Y.shape)
 x_train, x_test, y_train, y_test = train_test_split(train, Y, test_size=0.20, random_state=42)
 
 
+
+
+
 #output amount of samples in train and test
 print("The model has " + str(len(x_train)) + " inputs")
 objects = ('Train','Test')
@@ -143,11 +159,17 @@ samples = []
 samples.append(len(x_train))
 samples.append(len(x_test))
 
+#pie chart
 plt.pie(samples, labels=objects, colors=colors,autopct=make_autopct(samples), shadow=True, startangle=90)
 plt.axis('equal')
 plt.title('Number of total samples (Train/Test)')
 plt.show()
 
+#bar graph
+plt.bar(y_pos, samples, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.title('Number of Samples')
+plt.show()
 # output total amount of samples per set of each class
 # y_train[1][8]
 split_classes_train = [0, 0, 0, 0, 0]
@@ -169,6 +191,7 @@ y_pos = np.arange(len(objects))
 samples_train = split_classes_train
 samples_test = split_classes_test
 
+#PIe charts
 # Train Samples Plot
 plt.pie(samples_train, labels=folders, colors=colors,autopct=make_autopct(samples_train), shadow=True, startangle=90)
 plt.axis('equal')
@@ -182,6 +205,20 @@ plt.axis('equal')
 plt.title('Number of Samples per Class (Test)')
 plt.show()
 
+#bar graphs
+#Train Samples
+plt.figure(figsize=[12,6])
+plt.bar(y_pos, samples_train, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.title('Number of Samples per Class (Train)')
+plt.show()
+
+#Test Samples
+plt.figure(figsize=[12,6])
+plt.bar(y_pos, samples_test, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.title('Number of Samples per Class (Test)')
+plt.show()
 
 import warnings
 warnings.filterwarnings('always')

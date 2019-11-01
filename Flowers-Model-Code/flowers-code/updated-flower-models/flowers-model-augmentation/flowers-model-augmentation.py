@@ -36,6 +36,7 @@ from keras.models import load_model
 from keras.utils import to_categorical
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 import keras
+from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D, MaxPooling2D
@@ -82,7 +83,7 @@ def plot_total_values(number_classes, folders):
 #laptop path
 # data = 'C:/Users/denni/Documents/CSI-Courses/CSC450/Flowers-Model-Code/flowers'
 #pc path
-data = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers'
+data = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers-code/updated-flower-models/flowers'
 # List out the directories inside the main input folder
 folders = os.listdir(data)
 print(folders)
@@ -168,95 +169,95 @@ datagen = ImageDataGenerator(
         vertical_flip=False,
         fill_mode='nearest')  # randomly flip images
 
-# # Augmenting and saving the images into Class Directory
-# # Reset data folder if running again
-# for folder in folders:
-#     #tqdm allows for progress bar output
-#     for file in tqdm(os.listdir(os.path.join(data, folder))):
-#         if file.endswith("jpg"):
-#             img = load_img(os.path.join(data,folder,file))
-#             x = img_to_array(img)
-#             x = x.reshape((1,) + x.shape)
-#             i = 0
-#
-#             for batch in datagen.flow(x,save_to_dir=data + '/' + folder, save_prefix=str(folder), save_format='jpg'):
-#                 i += 1
-#                 if (folder == 'daisy'):
-#                     if i > 2:
-#                         break
-#                 elif (folder == 'dandelion'):
-#                     if i > 1:
-#                         break
-#                 elif (folder == 'rose'):
-#                     if i > 2:
-#                         break
-#                 elif (folder == 'sunflower'):
-#                     if i > 2:
-#                         break
-#                 elif (folder == 'tulip'):
-#                     if i > 1:
-#                         break
-#     print("Finished Augmenting Class ", folder)
-#
-# # define arrays for images and their corresponding labels
-# image_names = []
-# train_labels = []
-# X_data = []
-# Y_data = []
-# size = 128, 128
-# i = 0
-#
-# # import the samples
-# for folder in folders:
-#     #tqdm allows for progress bar output
-#     for file in tqdm(os.listdir(os.path.join(data, folder))):
-#         if file.endswith("jpg"):
-#             image_names.append(os.path.join(data, folder, file))
-#             train_labels.append(folder)
-#             img = Image.open(os.path.join(data, folder, file))
-#             img = img.resize((128, 128), Image.ANTIALIAS)  # resizes image without ratio
-#             img = np.array(img)
-#             if img.shape == (128, 128, 3):
-#                 X_data.append(img)
-#                 Y_data.append(i)
-#         else:
-#             continue
-#     i+=1
-#
-#
-#
-#
-# #output total number of samples per class with augmentation
-# Y = np.array(Y_data)
-# number_classes = [0,0,0,0,0]
-# for i in range(len(Y)):
-#     if (Y[i] == 0):
-#         number_classes[0] += 1
-#     elif (Y[i] == 1):
-#         number_classes[1] += 1
-#     elif (Y[i] == 2):
-#         number_classes[2] += 1
-#     elif (Y[i] == 3):
-#         number_classes[3] += 1
-#     elif (Y[i] == 4):
-#         number_classes[4] += 1
-#
-# objects = folders
-# y_pos = np.arange(len(objects))
-# samples = number_classes
-#
-#
-# #function for pie chart outputs of percentage and total number
-# def make_autopct(values):
-#     def my_autopct(pct):
-#         total = sum(values)
-#         val = int(round(pct*total/100.0))
-#         return '{p:.2f}%  ({v:d})'.format(p=pct,v=val)
-#     return my_autopct
-#
-# #print total number of classes before augmentation
-# print("Number of Samples per Class after Augmentation: ", number_classes)
-# plot_total_values(number_classes, folders)
+# Augmenting and saving the images into Class Directory
+# Reset data folder if running again
+for folder in folders:
+    #tqdm allows for progress bar output
+    for file in tqdm(os.listdir(os.path.join(data, folder))):
+        if file.endswith("jpg"):
+            img = load_img(os.path.join(data,folder,file))
+            x = img_to_array(img)
+            x = x.reshape((1,) + x.shape)
+            i = 0
+
+            for batch in datagen.flow(x,save_to_dir=data + '/' + folder, save_prefix=str(folder), save_format='jpg'):
+                i += 1
+                if (folder == 'daisy'):
+                    if i > 2:
+                        break
+                elif (folder == 'dandelion'):
+                    if i > 1:
+                        break
+                elif (folder == 'rose'):
+                    if i > 2:
+                        break
+                elif (folder == 'sunflower'):
+                    if i > 2:
+                        break
+                elif (folder == 'tulip'):
+                    if i > 1:
+                        break
+    print("Finished Augmenting Class ", folder)
+
+# define arrays for images and their corresponding labels
+image_names = []
+train_labels = []
+X_data = []
+Y_data = []
+size = 128, 128
+i = 0
+
+# import the samples
+for folder in folders:
+    #tqdm allows for progress bar output
+    for file in tqdm(os.listdir(os.path.join(data, folder))):
+        if file.endswith("jpg"):
+            image_names.append(os.path.join(data, folder, file))
+            train_labels.append(folder)
+            img = Image.open(os.path.join(data, folder, file))
+            img = img.resize((128, 128), Image.ANTIALIAS)  # resizes image without ratio
+            img = np.array(img)
+            if img.shape == (128, 128, 3):
+                X_data.append(img)
+                Y_data.append(i)
+        else:
+            continue
+    i+=1
+
+
+
+
+#output total number of samples per class with augmentation
+Y = np.array(Y_data)
+number_classes = [0,0,0,0,0]
+for i in range(len(Y)):
+    if (Y[i] == 0):
+        number_classes[0] += 1
+    elif (Y[i] == 1):
+        number_classes[1] += 1
+    elif (Y[i] == 2):
+        number_classes[2] += 1
+    elif (Y[i] == 3):
+        number_classes[3] += 1
+    elif (Y[i] == 4):
+        number_classes[4] += 1
+
+objects = folders
+y_pos = np.arange(len(objects))
+samples = number_classes
+
+
+#function for pie chart outputs of percentage and total number
+def make_autopct(values):
+    def my_autopct(pct):
+        total = sum(values)
+        val = int(round(pct*total/100.0))
+        return '{p:.2f}%  ({v:d})'.format(p=pct,v=val)
+    return my_autopct
+
+#print total number of classes before augmentation
+print("Number of Samples per Class after Augmentation: ", number_classes)
+plot_total_values(number_classes, folders)
 
 # Reduce the RGB values between 0 and 1
 X = X.astype('float32') / 255.0
@@ -289,7 +290,7 @@ model.add(Activation('relu'))
 model.add(Dense(5, activation="softmax"))
 
 model.summary()
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])
 
 
 # split the data set into training and validation sets
@@ -311,6 +312,7 @@ plt.pie(samples, labels=objects, colors=colors,autopct=make_autopct(samples), sh
 plt.axis('equal')
 plt.title('Number of total samples (Train/Test)')
 plt.show()
+
 
 #bar graph
 plt.bar(y_pos, samples, align='center', alpha=0.5)
@@ -376,3 +378,245 @@ validation_generator = datagen.flow(x_test, y_test, batch_size=128)
 classes={0,1,2,3,4}
 weights = compute_class_weight('balanced', np.unique(Y_data), Y_data)
 print("Class Weights: ", weights)
+
+
+#train the model
+History = model.fit_generator(
+    generator=train_generator,
+    steps_per_epoch=2*(len(x_train) // 128),
+    epochs=50,
+    validation_steps=10,
+    validation_data=validation_generator,
+    verbose=1 )
+
+
+#output table with loss at each epoch
+acc = History.history['acc']
+val_acc = History.history['val_acc']
+loss = History.history['loss']
+val_loss = History.history['val_loss']
+
+print("epoch \t  acc \t \t val_acc \t loss \t val_loss")
+print("------------------------------------------------------------------")
+
+for i in range(len(acc)):
+    print("{}".format(i+1), " \t", " \t", '{:.3}'.format(acc[i]), " \t", '{:.3}'.format(val_acc[i]), "\t\t",
+          '{:.3}'.format(loss[i]), "\t", '{:.3}'.format(val_loss[i]))
+
+model.save('flowers-augmentation.h5')
+
+#save the history object
+# convert the history.history dict to a pandas DataFrame:
+hist_df = pd.DataFrame(History.history)
+
+# save to json:
+hist_json_file = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers-code/updated-flower-models/flowers-model-augmentation/history.json'
+with open(hist_json_file, mode='w') as f:
+    hist_df.to_json(f)
+
+# or save to csv:
+hist_csv_file = 'C:/Users/dkrup/OneDrive/Documents/CSI CSC Courses/Deep-Learning-with-Python-Research-Project/Flowers-Model-Code/flowers-code/updated-flower-models/flowers-model-augmentation/history.csv'
+with open(hist_csv_file, mode='w') as f:
+    hist_df.to_csv(f)
+
+
+
+# summarize history for accuracy
+plt.figure(figsize=(15, 5))
+plt.subplot(1, 2, 1)
+plt.plot(np.arange(0, len(History.history['acc'])), History.history['acc'], 'r')
+plt.plot(np.arange(1, len(History.history['val_acc']) + 1), History.history['val_acc'], 'g')
+plt.xticks(np.arange(0, 25 + 1, 25 / 10))
+plt.title('Training Accuracy vs. Validation Accuracy')
+plt.xlabel('Num of Epochs')
+plt.ylabel('Accuracy')
+plt.legend(['train', 'validation'], loc='best')
+
+plt.subplot(1, 2, 2)
+plt.plot(np.arange(1, len(History.history['loss']) + 1), History.history['loss'], 'r')
+plt.plot(np.arange(1, len(History.history['val_loss']) + 1), History.history['val_loss'], 'g')
+plt.xticks(np.arange(0, 25 + 1, 25 / 10))
+plt.title('Training Loss vs. Validation Loss')
+plt.xlabel('Num of Epochs')
+plt.ylabel('Loss')
+plt.legend(['train', 'validation'], loc='best')
+
+plt.show()
+
+#output some predictions on images shown to the model
+y_img_batch, y_class_batch = validation_generator[1]
+y_pred = np.argmax(model.predict(y_img_batch),-1)
+y_true = np.argmax(y_class_batch,-1)
+
+plt.figure(figsize=(15,15))
+for i in range(9):
+    plt.subplot(330 + 1 + i)
+    plt.imshow((y_img_batch[i]))
+    actual_label = class_labels[y_true[i]]
+    predict_label = class_labels[y_pred[i]]
+    plt.title("Actual: " + actual_label + "| Prediction: " + predict_label)
+
+#output confusion matrix
+con_matrix = confusion_matrix(y_true, y_pred, labels=[0,1,2,3,4])
+
+plt.figure(figsize=(10,10))
+plt.title('Prediction of Flower types')
+sns.heatmap(con_matrix, annot=True, fmt="d", linewidths=.5, cmap="Blues")
+
+
+
+#print out classification report
+print(classification_report(y_true, y_pred, target_names=class_labels))
+
+
+#create precision recall, F1 score, ROC curve, AOC graph output
+
+from sklearn import preprocessing
+from scipy import interp
+from itertools import cycle
+from sklearn import metrics
+
+n_classes = len(folders)
+lb = preprocessing.LabelBinarizer()
+lb.fit(y_test)
+y_true = lb.transform(y_true)
+y_pred = lb.transform(y_pred)
+
+lw = 2
+
+
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_pred[:, i])
+        roc_auc[i] = metrics.auc(fpr[i], tpr[i])
+
+    # Compute micro-average ROC curve and ROC area
+    fpr["micro"], tpr["micro"], _ = metrics.roc_curve(y_test.ravel(), y_pred.ravel())
+    roc_auc["micro"] = metrics.auc(fpr["micro"], tpr["micro"])
+
+    # First aggregate all false positive rates
+    all_fpr = np.unique(np.concatenate([fpr[i] for i in range(n_classes)]))
+
+    # Then interpolate all ROC curves at this points
+    mean_tpr = np.zeros_like(all_fpr)
+    for i in range(n_classes):
+        mean_tpr += interp(all_fpr, fpr[i], tpr[i])
+
+    # Finally average it and compute AUC
+    mean_tpr /= n_classes
+
+    fpr["macro"] = all_fpr
+    tpr["macro"] = mean_tpr
+    roc_auc["macro"] = metrics.auc(fpr["macro"], tpr["macro"])
+
+    # Plot all ROC curves
+    plt.figure(figsize=(10, 10))
+    plt.plot(fpr["micro"], tpr["micro"],
+             label='micro-average ROC curve (area = {0:0.2f})'
+                   ''.format(roc_auc["micro"]),
+             color='deeppink', linestyle=':', linewidth=4)
+
+    plt.plot(fpr["macro"], tpr["macro"],
+             label='macro-average ROC curve (area = {0:0.2f})'
+                   ''.format(roc_auc["macro"]),
+             color='navy', linestyle=':', linewidth=4)
+
+    colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
+    for i, color in zip(range(n_classes), colors):
+        plt.plot(fpr[i], tpr[i], color=color, lw=lw,
+                 label='ROC curve of class {0} (area = {1:0.2f})'
+                       ''.format(i, roc_auc[i]))
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC and AUC Curve')
+    plt.legend(loc="lower right")
+    plt.show()
+
+    return metrics.roc_auc_score(y_test, y_pred, average=average)
+
+
+print("ROC_AUC_Score:", multiclass_roc_auc_score(y_true, y_pred))
+
+
+# ROC and AUC score
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import average_precision_score
+
+# For each class
+precision = dict()
+recall = dict()
+average_precision = dict()
+for i in range(n_classes):
+    precision[i], recall[i], _ = precision_recall_curve(y_true[:, i],
+                                                        y_pred[:, i])
+    average_precision[i] = average_precision_score(y_true[:, i], y_pred[:, i])
+
+# A "micro-average": quantifying score on all classes jointly
+precision["micro"], recall["micro"], _ = precision_recall_curve(y_true.ravel(),
+                                                                y_pred.ravel())
+average_precision["micro"] = average_precision_score(y_true, y_pred,
+                                                     average="micro")
+print('Average precision score, micro-averaged over all classes: {0:0.2f}'
+      .format(average_precision["micro"]))
+
+#plot the figure
+plt.figure()
+plt.step(recall['micro'], precision['micro'], color='b', alpha=0.2,
+         where='post')
+plt.fill_between(recall["micro"], precision["micro"], alpha=0.2, color='b')#,
+                 #**step_kwargs)
+
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.ylim([0.0, 1.05])
+plt.xlim([0.0, 1.0])
+plt.title(
+    'Average precision score, micro-averaged over all classes: AP={0:0.2f}'
+    .format(average_precision["micro"]))
+plt.show()
+
+
+#precision-recall curve
+# setup plot details
+colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal'])
+
+plt.figure(figsize=(21, 21))
+f_scores = np.linspace(0.2, 0.8, num=4)
+lines = []
+labels = []
+for f_score in f_scores:
+    x = np.linspace(0.01, 1)
+    y = f_score * x / (2 * x - f_score)
+    l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
+    plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
+
+lines.append(l)
+labels.append('iso-f1 curves')
+l, = plt.plot(recall["micro"], precision["micro"], color='gold', lw=2)
+lines.append(l)
+labels.append('micro-average Precision-recall (area = {0:0.2f})'
+              ''.format(average_precision["micro"]))
+
+for i, color in zip(range(n_classes), colors):
+    l, = plt.plot(recall[i], precision[i], color=color, lw=2)
+    lines.append(l)
+    labels.append('Precision-recall for class:{0} (area = {1:0.2f})'
+                  ''.format(i, average_precision[i]))
+
+fig = plt.gcf()
+fig.subplots_adjust(bottom=0.25)
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Precision-Recall Curve')
+plt.legend(lines, labels, loc=(0, -.2), prop=dict(size=10))
+plt.show()
